@@ -3,9 +3,12 @@ import { Splitter, SplitterPanel } from 'primereact/splitter';
 import Window1 from './components/Window1';
 import Window3 from './components/Window3';
 import Window2 from './components/Window2';
+import AddFrom from './components/AddFrom';
 
 export default function App() {
   const [frameworking, setFrameWorking] = useState(true);
+  const [visible, setVisible] = useState(false);
+
   useEffect(() => {
     const ele = document.querySelectorAll(".p-splitter-gutter");
 
@@ -22,7 +25,7 @@ export default function App() {
         <SplitterPanel size={65} style={{ overflow: "hidden" }}>
           <Splitter style={{ background: "transparent", display: "flex" }} gutterSize={10} onResizeEnd={() => setFrameWorking(true)}>
             <SplitterPanel style={{ height: "100%" }} className="flex align-items-center justify-content-center" size={20}>
-              <Window1 />
+              <Window1  setVisible={setVisible}/>
             </SplitterPanel>
             <SplitterPanel style={{ display: "flex", alignItems: "center", justifyContent: "center" }} className="flex align-items-center justify-content-center" size={80}>
               <Window2 frameworking={frameworking} />
@@ -33,6 +36,7 @@ export default function App() {
           <Window3 />
         </SplitterPanel>
       </Splitter>
+      <AddFrom setVisible={setVisible} visible={visible}/>
     </div>
   )
 }
