@@ -17,14 +17,15 @@ const AddFrom = ({ visible, setVisible }) => {
 
     const handleAdd = async () => {
         try {
-            await axios.post("http://localhost:4000/new/", {
+            await axios.post("https://mecoderbackend.vercel.app/new", {
                 content: value,
                 level:level.name
             }).then(() => {
                 setVisible(false);
             })
         } catch (error) {
-            alert(error.response.data.error)
+            alert(error)
+            console.log(error)
         }
     }
 

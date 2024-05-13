@@ -7,7 +7,7 @@ const Window1 = ({ setVisible }) => {
 
     useEffect(() => {
         const fetchQ = async () => {
-            const resp = await axios.get("http://localhost:4000/");
+            const resp = await axios.get("https://mecoderbackend.vercel.app/");
             console.log(resp.data);
 
             if (resp.data.success) {
