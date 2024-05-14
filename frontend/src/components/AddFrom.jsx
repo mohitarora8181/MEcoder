@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { InputTextarea } from "primereact/inputtextarea";
 import { FloatLabel } from "primereact/floatlabel";
 import { Dropdown } from 'primereact/dropdown';
@@ -6,27 +6,46 @@ import { Button } from 'primereact/button';
 import { Dialog } from 'primereact/dialog';
 import axios from 'axios';
 
-const AddFrom = ({ visible, setVisible }) => {
+const AddFrom = ({ visible, setVisible, isEditable }) => {
     const [value, setValue] = useState('');
-    const [level, setlevel] = useState(null);
+    const [level, setlevel] = useState({ name: "Easy" });
+    const [showLabel , setShowLabel] = useState("Add");
+
     const levels = [
         { name: 'Easy' },
         { name: 'Medium' },
         { name: 'Hard' }
     ];
 
+    useEffect(() => {
+        if (isEditable) {
+            setValue(isEditable.content);
+            setlevel({ name: isEditable.level });
+            setShowLabel("Update");
+        }else{
+            setValue("");
+            setlevel({ name: "Easy" });
+            setShowLabel("Add");
+        }
+    }, [isEditable])
+
     const handleAdd = async () => {
         try {
             await axios.post("https://mecoderbackend.vercel.app/new", {
                 content: value,
-                level:level.name
+                level: level.name
             }).then(() => {
                 setVisible(false);
+                window.location.href = window.location.pathname;
             })
+            
         } catch (error) {
             alert(error)
             console.log(error)
         }
+    }
+
+    const handleEdit = (props) => {
     }
 
     return (
@@ -39,7 +58,7 @@ const AddFrom = ({ visible, setVisible }) => {
                 <div style={{ display: "flex", justifyContent: "space-between", margin: "20px" }}>
                     <Dropdown value={level} onChange={(e) => setlevel(e.value)} options={levels} optionLabel="name"
                         placeholder="Select a Level" className="w-full md:w-14rem" checkmark={true} highlightOnSelect={false} />
-                    <Button label="Add" color='white' style={{ background: "black" }} severity='secondary' onClick={handleAdd} />
+                    <Button label={showLabel} color='white' style={{ background: "black" }} severity='secondary' onClick={isEditable ?()=> handleEdit(isEditable) : ()=>handleAdd()} />
                 </div>
             </Dialog>
         </div>

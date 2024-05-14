@@ -1,21 +1,49 @@
 import express from "express"
 const routes = express.Router();
 import { question } from "./model.js";
+import mongoose from "mongoose";
 
-routes.get("/",async (req,res)=>{
+routes.get("/", async (req, res) => {
     const questions = await question.find();
-    res.json({success:"true",questions});
+    res.json({ success: "true", questions });
 })
 
-routes.post("/new",async (req,res)=>{
+routes.delete("/", async (req, res) => {
+    const { _id } = req.body;
+    try {
+        const q = await question.findById(_id);
+        if (!q) {
+            res.status(404).json({ success: false, error: "ID not found" });
+        }
+        await question.deleteOne(q);
+        res.status(200).json({ success: true, message: "Question deleted successfully" });
+    } catch (error) {
+        res.status(500).json({ success: false, error });
+    }
+})
+
+routes.patch("/", async (req, res) => {
+    const { _id } = req.body;
+    try {
+        const q = await question.findById(_id);
+        if (!q) {
+            res.status(404).json({ success: false, error: "ID not found" });
+        }
+        await question.updateOne({ _id }, req.body);
+        res.status(200).json({ success: true, message: "Question updated successfully" });
+    } catch (error) {
+        res.status(500).json({ success: false, error });
+    }
+})
+
+routes.post("/new", async (req, res) => {
     const body = req.body;
-    console.log(body);
-    try{
+    try {
         await question.create(body);
-        res.status(201).json({success:true,message:"Question added successfully"});
-    }catch(error){
+        res.status(201).json({ success: true, message: "Question added successfully" });
+    } catch (error) {
         console.log(error);
-        res.status(500).json({success:false,error:error._message})
+        res.status(500).json({ success: false, error: error._message })
     }
 });
 
