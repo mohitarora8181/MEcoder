@@ -9,7 +9,7 @@ import axios from 'axios';
 const AddFrom = ({ visible, setVisible, isEditable }) => {
     const [value, setValue] = useState('');
     const [level, setlevel] = useState({ name: "Easy" });
-    const [showLabel , setShowLabel] = useState("Add");
+    const [showLabel, setShowLabel] = useState("Add");
 
     const levels = [
         { name: 'Easy' },
@@ -22,7 +22,7 @@ const AddFrom = ({ visible, setVisible, isEditable }) => {
             setValue(isEditable.content);
             setlevel({ name: isEditable.level });
             setShowLabel("Update");
-        }else{
+        } else {
             setValue("");
             setlevel({ name: "Easy" });
             setShowLabel("Add");
@@ -38,14 +38,27 @@ const AddFrom = ({ visible, setVisible, isEditable }) => {
                 setVisible(false);
                 window.location.href = window.location.pathname;
             })
-            
+
         } catch (error) {
             alert(error)
             console.log(error)
         }
     }
 
-    const handleEdit = (props) => {
+    const handleEdit = async (props) => {
+        try {
+            await axios.patch("https://mecoderbackend.vercel.app/", {
+                _id :props._id,
+                content: value,
+                level: level.name
+            }).then(() => {
+                setVisible(false);
+                window.location.href = window.location.pathname;
+            })
+
+        } catch (error) {
+            alert(error)
+        }
     }
 
     return (
@@ -58,7 +71,7 @@ const AddFrom = ({ visible, setVisible, isEditable }) => {
                 <div style={{ display: "flex", justifyContent: "space-between", margin: "20px" }}>
                     <Dropdown value={level} onChange={(e) => setlevel(e.value)} options={levels} optionLabel="name"
                         placeholder="Select a Level" className="w-full md:w-14rem" checkmark={true} highlightOnSelect={false} />
-                    <Button label={showLabel} color='white' style={{ background: "black" }} severity='secondary' onClick={isEditable ?()=> handleEdit(isEditable) : ()=>handleAdd()} />
+                    <Button label={showLabel} color='white' style={{ background: "black" }} severity='secondary' onClick={isEditable ? () => handleEdit(isEditable) : () => handleAdd()} />
                 </div>
             </Dialog>
         </div>
